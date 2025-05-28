@@ -71,6 +71,6 @@
 - Dockerfile для контейнеризации приложения
 - Подробная документация по развертыванию и использованию сервиса
 
-# Установка через терминал - git clone photo.git
+# Установка через терминал - git clone https://github.com/may65/photo.git
 # Установка модулей через терминал - pip install -r requirements.txt
 # Запуск через терминал - python main.py
