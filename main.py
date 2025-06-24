@@ -83,16 +83,45 @@ def passport_sum(detail=[]):
             # print(f'a else:{a}')
             return " ".join(detail2),a
 
-def passport_sum1(detail=[]):
+# def passport_data(detail=[]):
+#     a=0
+#     detail2 = []
+#     for item in detail:
+#         if item[0][0] == 0:
+#             detail2.append(item[1])
+#             a += 1
+#         else:
+#             detail2=detail2[:-1]
+#             return " ".join(detail2),a
+
+def passport_data(detail=[]):
     a=0
     detail2 = []
     for item in detail:
+        if item[0][1] == 8:
+            pass
+            return
         if item[0][0] == 0:
             detail2.append(item[1])
             a += 1
         else:
             detail2=detail2[:-1]
             return " ".join(detail2),a
+
+def foritem(detail,b):
+    a = 0
+    d = 0
+    summa=0
+    for item in detail:
+        # print(f'item:{item} a:{a} d:{d}')
+        if item[b] == 0:
+            return a,d
+        else:
+            a += 1
+            if summa < 8:
+                d+=1
+                summa=summa+item[1]
+
 
 def process_pas_image(image_path: str) -> PassportData:
     try:
@@ -104,48 +133,45 @@ def process_pas_image(image_path: str) -> PassportData:
 
         # Распознавание текста
         detailed_results = reader.readtext(processed_img, detail=1)
-        # detail=detailed_results
-        print('-'*50)
-        print(f'detailed_results:{detailed_results}')
-        print('-'*25)
         detail=[]
         detail1 = []
+        detail2 = []
         for item in detailed_results:
             l1 = sum(c.isalpha() for c in item[1])
             d1 = sum(c.isdigit() for c in item[1])
             s1 = len(item[1]) - l1 - d1
-            l2 = (sum(c.isalpha() for c in item[1]))
-            if (l2 > 2 and item[2] > 0.45) or d1 > 1 :
+            # l2 = (sum(c.isalpha() for c in item[1]))
+            if (l1 > 2 and item[2] > 0.45) or d1 > 1 :
                 # detail.append([[l1,d1,s1],item[0][0],item[1],item[2]])
                 detail.append([[l1, d1, s1], item[1]])
                 detail1.append(item[1])
-        print(f'detail:{detail}')
+                detail2.append([l1,d1,s1])
         print(f'detail1:{detail1}')
-        passport_issued_by,a=passport_sum(detail)
-        detail=detail[a:]
-        print(f'a 1:{a} passport_issued_by:{passport_issued_by}')
-        print(f'detail:{detail}')
-        # passport_issued_date=''
-        passport_issued_date,a=passport_sum1(detail)
-        detail = detail[a:]
-        print(f'passport_issued_date:{passport_issued_date}')
-        print(f'a 2:{a} detail:{detail}')
-        surname=detail[0][1]
-        detail=detail[1:]
-        name=detail[0][1]
-        detail = detail[1:]
-        patronymic=detail[0][1]
-        detail = detail[2:]
-        print(f'detail:{detail}')
-        detail2=[]
-        for item in detail:
-            if item[0][0] == 0:
-                detail2.append(item[1])
-                a += 1
-            else:
-                # detail2 = detail2[:-1]
-                birth_date=" ".join(detail2)
-                break
+        print(f'detail2:{detail2}')
+        a,d=foritem(detail2,0)
+        passport_issued_by=" ".join(detail1[0:a])
+        print(f'passport_issued_by:{passport_issued_by}')
+        # print(f'detail2:{detail2}')
+        detail1=detail1[a:]
+        detail2=detail2[a:]
+        a,d=foritem(detail2,1)
+        passport_issued_date=" ".join(detail1[0:d])
+        print(f'a:{a} d:{d} passport_issued_date:{passport_issued_date}')
+        # print(f'detail2:{detail2}')
+        detail1 = detail1[a:]
+        detail2 = detail2[a:]
+        surname = detail1[0]
+        print(f'surname:{surname}')
+        name = detail1[1]
+        print(f'name:{name}')
+        patronymic = detail1[2]
+        print(f'patronymic:{surname}')
+        detail1 = detail1[4:]
+        detail2 = detail2[4:]
+        # print(f'detail2:{detail2}')
+        a, d = foritem(detail2, 1)
+        birth_date = " ".join(detail1[0:d])
+        print(f'birth_date:{birth_date}')
 
         rotated_results = reader.readtext(rotated_img, detail=1)
 
