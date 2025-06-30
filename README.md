@@ -74,4 +74,5 @@
 # Установка через терминал - git clone https://github.com/may65/photo.git
 # Установка модулей через терминал - pip install -r requirements.txt
 # Запуск через терминал - python main.py
-# На второй консоле перейти в data - cd data и запустить - curl -X POST "http://localhost:8000/pas" -F "file=@pas10.jpg"
+# На второй консоле перейти в data - cd data и запустить - curl -X POST "http://localhost:8000/pas" -F "file=@pas10.jpg" для паспорта 
+# или curl -X POST "http://localhost:8000/pts" -F "file=@pts2.jpg" для ПТС
