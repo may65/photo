@@ -278,13 +278,29 @@ app = FastAPI(
 
 
 # Общая функция для обработки файлов
+# async def handle_file(file: UploadFile, processor):
+#     # print(f'handle_file')
+#     try:
+#         # Проверка формата изображения
+#         if file.content_type not in ["image/jpeg", "image/png"]:
+#             # print(f'raise:{HTTPException(status_code=400, detail="Неподдерживаемый формат изображения")}')
+#             print(f'123')
+#             raise HTTPException(status_code=400, detail="Неподдерживаемый формат изображения")
+
 async def handle_file(file: UploadFile, processor):
-    print(f'handle_file')
     try:
-        # Проверка формата изображения
-        if file.content_type not in ["image/jpeg", "image/png"]:
-            # print(f'raise:{HTTPException(status_code=400, detail="Неподдерживаемый формат изображения")}')
+        print(f'___111___')
+        # Разрешаем application/octet-stream и проверяем расширение
+        allowed_types = ["image/jpeg", "image/png", "application/octet-stream"]
+        if file.content_type not in allowed_types:
+            print(f'___222___')
             raise HTTPException(status_code=400, detail="Неподдерживаемый формат изображения")
+
+        # Проверяем расширение файла
+        filename = file.filename.lower()
+        print(f'___333___ filename:{filename}')
+        if not (filename.endswith(".jpg") or filename.endswith(".jpeg") or filename.endswith(".png")):
+            raise HTTPException(status_code=400, detail="Неподдерживаемое расширение файла")
 
         # Сохранение во временный файл
         with tempfile.NamedTemporaryFile(delete=False, suffix=".jpg") as temp_file:
@@ -312,10 +328,16 @@ async def handle_file(file: UploadFile, processor):
         )
 
 
+
 # Эндпоинт для паспорта РФ
 @app.post("/pas", response_model=PassportData, responses={400: {"model": ErrorResponse}})
+# print(f'___000___ @app.post')
 async def recognize_passport(file: UploadFile = File(...)):
     print(f'recognize_passport')
+    print(f"Received file: {file.filename}")
+    print(f"Content-Type: {file.content_type}")
+    print(f"File size: {file.size} bytes")
+    # exit()
     return await handle_file(file, process_pas_image)
 
 
